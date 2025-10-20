@@ -34,6 +34,7 @@ file('bukkit').listFiles((FileFilter) ((File file) -> file.isDirectory() && file
     }
 }
 
+/*
 // Fabric
 include("fabric")
 project(":fabric").with {
@@ -48,3 +49,4 @@ file('fabric').listFiles((FileFilter) ((File file) -> file.isDirectory() && file
         buildFileName = '../build.gradle'
     }
 }
+*/
