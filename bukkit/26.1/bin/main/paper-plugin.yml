@@ -8,10 +8,6 @@ version: '${version}'
 api-version: '${minecraft_api_version}'
 dependencies:
   server:
-    ViaVersion:
-      required: false
-      load: BEFORE
-      join-classpath: true
     MysqlPlayerDataBridge:
       required: false
       load: BEFORE

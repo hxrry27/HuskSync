@@ -22,21 +22,15 @@ package net.william278.husksync.util;
 import net.william278.husksync.BukkitHuskSync;
 import net.william278.husksync.HuskSync;
 import net.william278.husksync.data.UserDataHolder;
+import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import space.arim.morepaperlib.scheduling.AsynchronousScheduler;
-import space.arim.morepaperlib.scheduling.AttachedScheduler;
-import space.arim.morepaperlib.scheduling.RegionalScheduler;
-import space.arim.morepaperlib.scheduling.ScheduledTask;
-
-import java.time.Duration;
-import java.time.temporal.ChronoUnit;
 
 public interface BukkitTask extends Task {
 
     class Sync extends Task.Sync implements BukkitTask {
 
-        private ScheduledTask task;
+        private org.bukkit.scheduler.BukkitTask task;
         private final @Nullable UserDataHolder user;
 
         protected Sync(@NotNull HuskSync plugin, @NotNull Runnable runnable,
@@ -63,30 +57,18 @@ public interface BukkitTask extends Task {
                 return;
             }
 
-            // Use entity-specific scheduler if user is not null
-            if (user != null) {
-                final AttachedScheduler scheduler = ((BukkitHuskSync) getPlugin()).getUserSyncScheduler(user);
-                if (delayTicks > 0) {
-                    this.task = scheduler.runDelayed(runnable, null, delayTicks);
-                } else {
-                    this.task = scheduler.run(runnable, null);
-                }
-                return;
-            }
-
-            // Or default to the global scheduler
-            final RegionalScheduler scheduler = ((BukkitHuskSync) getPlugin()).getSyncScheduler();
+            final BukkitHuskSync bukkitPlugin = (BukkitHuskSync) getPlugin();
             if (delayTicks > 0) {
-                this.task = scheduler.runDelayed(runnable, delayTicks);
+                this.task = Bukkit.getScheduler().runTaskLater(bukkitPlugin, runnable, delayTicks);
             } else {
-                this.task = scheduler.run(runnable);
+                this.task = Bukkit.getScheduler().runTask(bukkitPlugin, runnable);
             }
         }
     }
 
     class Async extends Task.Async implements BukkitTask {
 
-        private ScheduledTask task;
+        private org.bukkit.scheduler.BukkitTask task;
 
         protected Async(@NotNull HuskSync plugin, @NotNull Runnable runnable, long delayTicks) {
             super(plugin, runnable, delayTicks);
@@ -110,22 +92,19 @@ public interface BukkitTask extends Task {
                 return;
             }
 
-            final AsynchronousScheduler scheduler = ((BukkitHuskSync) getPlugin()).getAsyncScheduler();
+            final BukkitHuskSync bukkitPlugin = (BukkitHuskSync) getPlugin();
             if (delayTicks > 0) {
                 plugin.debug("Running async task with delay of " + delayTicks + " ticks");
-                this.task = scheduler.runDelayed(
-                        runnable,
-                        Duration.of(delayTicks * 50L, ChronoUnit.MILLIS)
-                );
+                this.task = Bukkit.getScheduler().runTaskLaterAsynchronously(bukkitPlugin, runnable, delayTicks);
             } else {
-                this.task = scheduler.run(runnable);
+                this.task = Bukkit.getScheduler().runTaskAsynchronously(bukkitPlugin, runnable);
             }
         }
     }
 
     class Repeating extends Task.Repeating implements BukkitTask {
 
-        private ScheduledTask task;
+        private org.bukkit.scheduler.BukkitTask task;
 
         protected Repeating(@NotNull HuskSync plugin, @NotNull Runnable runnable, long repeatingTicks) {
             super(plugin, runnable, repeatingTicks);
@@ -146,10 +125,9 @@ public interface BukkitTask extends Task {
             }
 
             if (!cancelled) {
-                final AsynchronousScheduler scheduler = ((BukkitHuskSync) getPlugin()).getAsyncScheduler();
-                this.task = scheduler.runAtFixedRate(
-                        runnable, Duration.ZERO,
-                        Duration.of(repeatingTicks * 50L, ChronoUnit.MILLIS)
+                final BukkitHuskSync bukkitPlugin = (BukkitHuskSync) getPlugin();
+                this.task = Bukkit.getScheduler().runTaskTimerAsynchronously(
+                        bukkitPlugin, runnable, 0L, repeatingTicks
                 );
             }
         }
@@ -182,7 +160,7 @@ public interface BukkitTask extends Task {
 
         @Override
         default void cancelTasks() {
-            ((BukkitHuskSync) getPlugin()).getScheduler().cancelGlobalTasks();
+            Bukkit.getScheduler().cancelTasks((BukkitHuskSync) getPlugin());
         }
 
     }

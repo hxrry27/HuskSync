@@ -49,6 +49,7 @@ public class BukkitEventListener extends EventListener implements BukkitJoinEven
 
     public void onLoad() {
         this.lockedHandler = createLockedHandler((BukkitHuskSync) plugin);
+        lockedHandler.onLoad();
     }
 
     public void onEnable() {
@@ -66,13 +67,7 @@ public class BukkitEventListener extends EventListener implements BukkitJoinEven
         if (!getPlugin().getSettings().isCancelPackets()) {
             return new BukkitLockedEventListener(plugin);
         }
-        if (getPlugin().isDependencyLoaded("PacketEvents")) {
-            return new BukkitPacketEventsLockedPacketListener(plugin);
-        } else if (getPlugin().isDependencyLoaded("ProtocolLib")) {
-            return new BukkitProtocolLibLockedPacketListener(plugin);
-        }
-
-        return new BukkitLockedEventListener(plugin);
+        return new BukkitPacketEventsLockedPacketListener(plugin);
     }
 
     @Override
@@ -139,7 +134,6 @@ public class BukkitEventListener extends EventListener implements BukkitJoinEven
         }
     }
 
-    // We handle commands here to allow specific command handling on ProtocolLib servers
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onCommandProcessed(@NotNull PlayerCommandPreprocessEvent event) {
         if (!lockedHandler.isCommandDisabled(event.getMessage().substring(1).split(" ")[0])) {

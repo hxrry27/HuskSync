@@ -73,7 +73,7 @@ public class Settings {
     @Comment({"Whether to enable the Player Analytics hook.", "Docs: https://william278.net/docs/husksync/plan-hook"})
     private boolean enablePlanHook = true;
 
-    @Comment("Whether to cancel game event packets directly when handling locked players if ProtocolLib or PacketEvents is installed")
+    @Comment("Whether to cancel game event packets directly when handling locked players (uses bundled PacketEvents)")
     private boolean cancelPackets = true;
 
     @Comment("Add HuskSync commands to this list to prevent them from being registered (e.g. ['userdata'])")
