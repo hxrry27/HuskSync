@@ -64,7 +64,9 @@ import net.william278.toilet.Toilet;
 import net.william278.uniform.Uniform;
 import net.william278.uniform.bukkit.BukkitUniform;
 import org.bstats.bukkit.Metrics;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.map.MapView;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -138,10 +140,19 @@ public class BukkitHuskSync extends JavaPlugin implements HuskSync, BukkitTask.S
         // Check compatibility
         checkCompatibility();
 
-        // Preload NBT-API
+        // Preload NBT-API. preloadApi() returns false when NBT-API doesn't recognise the running
+        // Minecraft version (detected as UNKNOWN) - which happens on a brand-new MC build before a
+        // bundled NBT-API release formally adds it (e.g. 2.15.7 on MC 26.2). In that case NBT still
+        // works using the newest known mappings, so only abort if a functional round-trip probe
+        // confirms the API is genuinely broken rather than merely version-unrecognised.
         if (!NBT.preloadApi()) {
-            log(Level.SEVERE, "Failed to load NBT API. HuskSync will not be initialized!");
-            return;
+            if (!isNbtApiFunctional()) {
+                log(Level.SEVERE, "Failed to load NBT API. HuskSync will not be initialized!");
+                return;
+            }
+            log(Level.WARNING, "NBT-API does not recognise this Minecraft version yet, but a functional "
+                    + "check passed - continuing using the newest known mappings. If you hit item data issues, "
+                    + "update HuskSync's bundled NBT-API once a build formally supports this version.");
         }
 
         // Register commands
@@ -221,6 +232,21 @@ public class BukkitHuskSync extends JavaPlugin implements HuskSync, BukkitTask.S
         // Hook into bStats and check for updates
         initialize("metrics", (plugin) -> this.registerMetrics(METRICS_ID));
         this.checkForUpdates();
+    }
+
+    // Verifies NBT-API can actually round-trip an ItemStack through NBT, exercising the NMS
+    // reflection path HuskSync relies on for item (de)serialization. Used to decide whether a
+    // failed NBT.preloadApi() (e.g. an unrecognised, newer Minecraft version) is a genuine
+    // breakage or merely a version the bundled NBT-API doesn't formally know about yet.
+    private boolean isNbtApiFunctional() {
+        try {
+            final ItemStack probe = new ItemStack(Material.STONE);
+            final ItemStack restored = NBT.itemStackFromNBT(NBT.itemStackToNBT(probe));
+            return restored != null && restored.getType() == Material.STONE;
+        } catch (Throwable t) {
+            log(Level.WARNING, "NBT-API functional probe failed", t);
+            return false;
+        }
     }
 
     @Override
