@@ -3,7 +3,7 @@ plugins {
 }
 
 preprocess {
-    createNode("26.1", 26010, "mojmap")
+    createNode("26.2", 26020, "mojmap")
 
     strictExtraMappings.set(true)
 }
