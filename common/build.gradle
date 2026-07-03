@@ -5,7 +5,12 @@ plugins {
 dependencies {
     api 'commons-io:commons-io:2.20.0'
     api 'org.apache.commons:commons-text:1.14.0'
-    api 'net.william278:minedown:1.8.2'
+    // MineDown is vendored into src/main/java/de/themoep/minedown/adventure (pinned to upstream
+    // commit 4c7aefe) with a one-line patch for Adventure 5 (MC 26.2 removed ClickEvent.Action's
+    // enum valueOf). See that package's MineDownParser header. Provided as `api` previously; the
+    // vendored classes are compiled in directly and still relocated by the existing de.themoep rule.
+    // FUTURE: drop the vendored files and restore a normal dependency once upstream MineDown
+    // publishes an Adventure-5-native release.
     api 'net.william278:mapdataapi:2.0'
     api 'org.json:json:20250517'
     api 'com.google.code.gson:gson:2.13.1'
@@ -23,9 +28,12 @@ dependencies {
     compileOnly 'com.mojang:brigadier:1.1.8'
     compileOnly 'org.projectlombok:lombok:1.18.38'
     compileOnly 'org.jetbrains:annotations:26.0.2'
-    compileOnly 'net.kyori:adventure-api:4.23.0'
+    // Adventure 5.2.0 is what Paper 26.2 ships at runtime; compiling against it (rather than 4.x)
+    // surfaces every Adventure 4->5 API incompatibility at compile time instead of as runtime errors.
+    compileOnly 'net.kyori:adventure-api:5.2.0'
     compileOnly 'net.kyori:adventure-platform-api:4.4.0'
-    compileOnly "net.kyori:adventure-text-serializer-plain:4.23.0"
+    compileOnly "net.kyori:adventure-text-serializer-plain:5.2.0"
+    compileOnly "net.kyori:adventure-text-serializer-legacy:5.2.0"
     compileOnly 'com.google.guava:guava:33.4.8-jre'
     compileOnly 'com.github.plan-player-analytics:Plan:5.6.2965'
     compileOnly "redis.clients:jedis:$jedis_version"
