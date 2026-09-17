@@ -122,9 +122,9 @@ public class BukkitEventListener extends EventListener implements BukkitJoinEven
         }
 
         // Handle saving player data snapshots when the world saves
-        plugin.runAsync(() -> super.saveOnWorldSave(event.getWorld().getPlayers()
+        super.saveOnWorldSave(event.getWorld().getPlayers()
                 .stream().map(player -> BukkitUser.adapt(player, plugin))
-                .collect(Collectors.toList())));
+                .collect(Collectors.toList()));
     }
 
     @EventHandler(ignoreCancelled = true)
