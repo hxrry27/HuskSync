@@ -62,10 +62,14 @@ public class LockstepDataSyncer extends DataSyncer {
 
             // If they are checked in - or checked out on *this* server - we can apply their latest data
             getRedis().setUserCheckedOut(user, true);
-            getRedis().getUserData(user).ifPresentOrElse(
-                    data -> user.applySnapshot(data, DataSnapshot.UpdateCause.SYNCHRONIZED),
-                    () -> this.setUserFromDatabase(user)
-            );
+            final Optional<DataSnapshot.Packed> redisData = getRedis().getUserData(user);
+            if (redisData.isPresent()) {
+                plugin.debug(String.format("[%s] Applying data from Redis cache", user.getName()));
+                this.applyNewestSnapshotFromDB(user, redisData.get());
+            } else {
+                plugin.debug(String.format("[%s] no Redis data; loading from database", user.getName()));
+                this.setUserFromDatabase(user);
+            }
             return true;
         });
     }
@@ -75,7 +79,11 @@ public class LockstepDataSyncer extends DataSyncer {
         runTrackedAsync(onlineUser, () -> saveData(
                 onlineUser, onlineUser.createSnapshot(DataSnapshot.SaveCause.DISCONNECT),
                 (user, data) -> {
-                    getRedis().setUserData(user, data);
+                    if (!getRedis().setUserData(user, data)) {
+                        // Cached Redis snapshot may be stale, so clear the LATEST_SNAPSHOT key
+                        // Next login uses a database snapshot, see applyNewestSnapshotFromDB()
+                        getRedis().clearUserData(user);
+                    }
                     getRedis().setUserCheckedOut(user, false);
                     plugin.unlockPlayer(user.getUuid());
                 }
