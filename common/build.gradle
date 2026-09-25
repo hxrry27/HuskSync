@@ -5,18 +5,11 @@ plugins {
 dependencies {
     api 'commons-io:commons-io:2.22.0'
     api 'org.apache.commons:commons-text:1.15.0'
-    // MineDown is vendored into src/main/java/de/themoep/minedown/adventure (pinned to upstream
-    // commit 4c7aefe) with a one-line patch for Adventure 5 (MC 26.2 removed ClickEvent.Action's
-    // enum valueOf). See that package's MineDownParser header. Provided as `api` previously; the
-    // vendored classes are compiled in directly and still relocated by the existing de.themoep rule.
-    // FUTURE: drop the vendored files and restore a normal dependency once upstream MineDown
-    // publishes an Adventure-5-native release.
     api 'net.william278:mapdataapi:2.0'
     api 'org.json:json:20250517'
     api 'com.google.code.gson:gson:2.14.0'
     api 'com.fatboyindustrial.gson-javatime-serialisers:gson-javatime-serialisers:1.1.2'
     api 'de.exlll:configlib-yaml:4.8.1'
-    api 'net.william278:paginedown:1.1.2'
     api 'net.william278:DesertWell:2.0.4'
     api('com.zaxxer:HikariCP:7.1.0') {
         exclude module: 'slf4j-api'
@@ -33,7 +26,7 @@ dependencies {
     compileOnly 'net.kyori:adventure-api:5.2.0'
     compileOnly 'net.kyori:adventure-platform-api:4.4.0'
     compileOnly "net.kyori:adventure-text-serializer-plain:5.2.0"
-    compileOnly "net.kyori:adventure-text-serializer-legacy:5.2.0"
+    compileOnly "net.kyori:adventure-text-minimessage:5.2.0"
     compileOnly 'com.google.guava:guava:33.6.0-jre'
     compileOnly 'com.github.plan-player-analytics:Plan:5.6.2965'
     compileOnly "io.lettuce:lettuce-core:$lettuce_version"
@@ -47,6 +40,7 @@ dependencies {
     testImplementation "org.xerial.snappy:snappy-java:$snappy_version"
     testImplementation 'com.google.guava:guava:33.6.0-jre'
     testImplementation 'com.github.plan-player-analytics:Plan:5.6.2965'
+    testImplementation 'net.kyori:adventure-text-minimessage:5.2.0'
     testCompileOnly 'de.exlll:configlib-yaml:4.8.1'
     testCompileOnly 'org.jetbrains:annotations:26.1.0'
 
