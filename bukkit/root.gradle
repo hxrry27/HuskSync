@@ -3,7 +3,10 @@ plugins {
 }
 
 preprocess {
-    createNode("26.2", 26020, "mojmap")
+    def paper26_3 = createNode("26.3", 26030, "mojmap")
+    def paper26_2 = createNode("26.2", 26020, "mojmap")
+
+    paper26_3.link(paper26_2, null)
 
     strictExtraMappings.set(true)
 }
