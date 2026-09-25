@@ -1,30 +1,8 @@
-<!--suppress ALL -->
-<p align="center">
-    <img src="images/banner.png" alt="HuskSync" />
-    <a href="https://github.com/WiIIiam278/HuskSync/actions/workflows/ci.yml">
-        <img src="https://img.shields.io/github/actions/workflow/status/WiIIiam278/HuskSync/ci.yml?branch=master&logo=github"/>
-    </a>
-    <a href="https://repo.william278.net/#/releases/net/william278/husksync/">
-        <img src="https://repo.william278.net/api/badge/latest/releases/net/william278/husksync/husksync-common?color=00fb9a&name=Maven&prefix=v" />
-    </a>
-    <a href="https://discord.gg/tVYhJfyDWG">
-        <img src="https://img.shields.io/discord/818135932103557162.svg?label=&logo=discord&logoColor=fff&color=7389D8&labelColor=6A7EC2" />
-    </a> 
-    <br/>
-    <b>
-        <a href="https://www.spigotmc.org/resources/husksync.97144/">Spigot</a>
-    </b> —
-    <b>
-        <a href="https://william278.net/docs/husksync/setup">Setup</a>
-    </b> — 
-    <b>
-        <a href="https://william278.net/docs/husksync/">Docs</a>
-    </b> — 
-    <b>
-        <a href="https://github.com/WiIIiam278/HuskSync/issues">Issues</a>
-    </b>
-</p>
-<br/>
+## Fork Status
+
+Please note, this is a **fork** of the Original plugin by William278, and all credit for the codebase should go to him. I use this on my public server, so it will always be as up to date as possible, feel free to pop a PR / issue if you notice any changes / use this fork yourself!
+
+I'm not currently adding new features, this is purely maintenance of the existing codebase, and as such **everything other that the latest paper version is unsupported**
 
 **HuskSync** is a modern, cross-server player data synchronization system that enables the comprehensive synchronization of your user's data across multiple proxied servers. It does this by making use of Redis and a MySQL/Mongo/PostgreSQL to optimally cache data while players change servers.
 
